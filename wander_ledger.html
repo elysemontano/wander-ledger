@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Wander Ledger – Trip Budget Planner</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6f9;--cd:#fff;--tx:#1b2430;--mu:#667386;--bd:#dfe4eb;--ac:#1f6feb;--ok:#17743f;--okb:#e1f4e8;--wn:#8a5a00;--wnb:#fdf0d2;--bad:#b3261e;--badb:#fbe3e0}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10151c;--cd:#1a212b;--tx:#e8edf3;--mu:#97a3b3;--bd:#2c3644;--ac:#5b9bff;--ok:#5fd18d;--okb:#17301f;--wn:#f0c36a;--wnb:#33280f;--bad:#ff8a80;--badb:#3a1b19}}
+:root[data-theme=dark]{--bg:#10151c;--cd:#1a212b;--tx:#e8edf3;--mu:#97a3b3;--bd:#2c3644;--ac:#5b9bff;--ok:#5fd18d;--okb:#17301f;--wn:#f0c36a;--wnb:#33280f;--bad:#ff8a80;--badb:#3a1b19}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.w{max-width:980px;margin:0 auto;padding:12px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0}
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.k{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}.k small{color:var(--mu);display:block;font-size:11px}.k b{font-size:18px}
+h1{font-size:18px;margin:0 0 8px}h3{font-size:14px;margin:16px 0 8px}h2{font-size:16px;margin:0 0 4px}.sub{color:var(--mu);margin:0 0 10px;font-size:13px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:12px 0}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+label{display:block;font-size:11px;color:var(--mu)}
+input[type=number],input[type=text],select{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg);color:var(--tx);font:inherit;margin-top:2px}
+input[type=checkbox],input[type=radio]{accent-color:var(--ac)}
+.o{border:2px solid var(--bd);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}.o.sel{border-color:var(--ac)}
+.oh{display:flex;justify-content:space-between;align-items:center}.oh label{color:var(--tx);font-size:13px;font-weight:600}
+.x{border:0;background:none;color:var(--mu);font-size:20px;cursor:pointer}
+.add,.btn,.tab{border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font-size:12px;background:var(--bg);border-radius:8px;padding:7px 8px}.chip b{font-size:14px}
+.im{margin-top:4px;padding:3px 7px;border-radius:6px;font-weight:600;font-size:12px}
+.ok{background:var(--okb);color:var(--ok)}.wn{background:var(--wnb);color:var(--wn)}.bad{background:var(--badb);color:var(--bad)}
+.bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative}.bar i{display:block;height:100%}
+.row{display:grid;grid-template-columns:110px 1fr 120px;gap:8px;align-items:center;margin:5px 0;font-size:13px}.row span:last-child{text-align:right}
+.ov{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:700px){.ov{grid-template-columns:1fr}.st{grid-template-columns:1fr 1fr}.row{grid-template-columns:90px 1fr 100px}}
+.don{width:120px;height:120px;border-radius:50%;margin:6px auto}.don div{width:70px;height:70px;border-radius:50%;background:var(--cd);position:relative;top:25px;left:25px}
+table{width:100%;border-collapse:collapse}td,th{padding:4px;text-align:left;font-size:12px;color:var(--mu)}td:first-child{color:var(--tx);font-size:13px}
+.cap{background:var(--bg);border-radius:8px;padding:8px;margin-bottom:10px;font-size:13px}
+.sc{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--bd);font-size:13px}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--mu);justify-content:center}.lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px}
+</style></head><body><div class="w">
+<div class="top"><h1>🧭 Wander Ledger <span style="font-size:12px;font-weight:400;color:var(--mu)">trip budget · points &amp; cash</span></h1><div class="st">
+<div class="k"><small>Cash planned</small><b id="hC"></b></div><div class="k"><small>Left of budget</small><b id="hL"></b></div>
+<div class="k"><small>Points used / owned</small><b id="hP"></b></div><div class="k"><small>Status</small><b id="hS"></b></div></div></div>
+
+<div class="c"><h2>Your numbers</h2><p class="sub">Change anything here and the whole page updates.</p><div class="g" id="set"></div></div>
+<div class="c"><h2>Points by card</h2><p class="sub">Each card is its own balance and can never spill into another. "Use for" limits which bookings can draw on it (e.g. Hilton = hotels only). Balances are placeholders — enter yours. Hotels can also <b>earn</b> points into any card (set on each hotel); those add to that card's balance.</p><div class="g3" id="pgs"></div></div>
+
+<div class="c"><h2>Where the money goes</h2><div class="ov" id="ov"></div></div>
+
+<div class="c"><h2>1 · Flights — by leg: coach vs business, points vs cash</h2><p class="sub">Plan each leg separately and mix cabins (e.g. business home, coach there). Each card shows its effect on your total and on its points card. Fares are one-way per person; pick one plan per leg.</p><div id="fl"></div></div>
+
+<div class="c"><h2>2 · Hotels — what can you afford?</h2><p class="sub">Pick a city, enter real options, and see the impact of each on your total.</p><div class="tabs" id="tabs"></div><div class="cap" id="cap"></div><div class="g3" id="ho"></div></div>
+
+<div class="c"><h2>3 · Food, transport &amp; sightseeing by city</h2><p class="sub">Starter estimates for 2 travelers (mid-range). Edit the dollar totals.</p><div id="ot"></div></div>
+
+<div class="c"><h2>Saved scenarios</h2><p class="sub">Save your current flight + hotel picks, change things, save again, and compare.</p>
+<div style="display:flex;gap:8px"><input type="text" id="scn" placeholder="Scenario name, e.g. Flights on points, Positano"><button class="btn" data-a="save-sc">Save</button></div><div id="scl"></div>
+<p class="sub" style="margin-top:12px">Estimates are rough peak-season placeholders; replace with real quotes. <button class="add" data-a="reset">Reset all</button></p>
+<h3>Back up / move to another device</h3><p class="sub">Export saves your plan as a small file. On another device, tap Import plan file and choose it.</p>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" data-a="export">Export plan file</button><button class="btn" data-a="import">Import plan file</button><input type="file" id="bf" accept=".json,application/json" style="display:none"><span class="sub" id="bks" style="margin:0"></span></div><textarea id="bk" rows="3" style="display:none;width:100%;margin-top:6px;padding:6px;border:1px solid var(--bd);border-radius:7px;background:var(--bg);color:var(--tx);font:12px monospace"></textarea></div>
+</div>
+<script>
+const C=["Rome","Florence","Amalfi Coast"],K=["Flight","Hotel","Food","Transportation","Sightseeing"],COL=["#1f6feb","#e67e22","#17a673","#8e44ad","#d6336c"],L=["Outbound","Return"],LT=l=>l=="Outbound"?"Outbound · Home → "+dn("Rome"):"Return · "+dn("Rome")+" → Home";
+const $=s=>document.querySelector(s),f$=n=>(n<0?"-":"")+"$"+Math.abs(Math.round(n)).toLocaleString(),fp=n=>Math.round(n).toLocaleString(),esc=s=>String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const H=(a,b,c)=>[a,b,c].map((x,i)=>({n:"ABC"[i]+": "+x[0],rate:x[1],tax:x[2],pts:0,use:false,pg:2,earn:0,bonus:0,epg:0}));
+const fo0=(n,cab,cash,pts,fee,on,pg)=>({n,cab,cash,pts,fee,on,pg,src:[{pg,amt:""}]});
+const legs=()=>({sel:0,o:[fo0("Coach – cash","Coach",625,0,0,0,0),fo0("Coach – points","Coach",625,30000,60,2,0),fo0("Business – points + fees","Business",3200,85000,120,2,1)]});
+const def=()=>({v:3,cn:{},s:{budget:10000,res:5,pax:2,cpp:1.5,cnt:1},pg:[{n:"Capital One",own:100000,use:"Flights"},{n:"Chase",own:80000,use:"Flights"},{n:"Hilton",own:150000,use:"Hotels"}],
+fl:{Outbound:legs(),Return:legs()},
+h:{"Rome":{nt:4,sel:1,o:H(["3★ near Termini",140,55],["4★ historic center",240,70],["5★ Spanish Steps",420,90])},
+"Florence":{nt:3,sel:1,o:H(["3★ near station",150,35],["4★ Duomo/Oltrarno",250,40],["5★ Arno riverfront",420,55])},
+"Amalfi Coast":{nt:3,sel:1,o:H(["Minori/Praiano 3★",190,20],["Amalfi town 4★",330,30],["Positano sea view",520,35])}},
+x:{Food:[800,480,630],Transportation:[164,178,580],Sightseeing:[316,370,394]},sc:[]});
+let S,tab="Rome";try{S=JSON.parse(localStorage.getItem("itb2"))}catch(e){}S=mig(S)||def();
+const save=()=>{try{localStorage.setItem("itb2",JSON.stringify(S))}catch(e){}};
+const ok=(i,k)=>S.pg[i]&&(S.pg[i].use=="Both"||S.pg[i].use==k),first=k=>{const i=S.pg.findIndex((g,j)=>ok(j,k));return i<0?0:i};
+const dn=c=>(S&&S.cn&&S.cn[c])||c;
+function mig(o){const d=def();if(!o||!o.s||!o.h||!o.x)return null;o.v=3;o.cn=o.cn||{};o.sc=o.sc||[];o.pg=o.pg&&o.pg.length?o.pg:d.pg;Object.keys(d.s).forEach(k=>{if(o.s[k]==null)o.s[k]=d.s[k]});if(!o.fl||!o.fl.Outbound)o.fl=d.fl;L.forEach(l=>{o.fl[l].sel=o.fl[l].sel||0});return o}
+const hs=()=>Object.fromEntries(C.map(c=>[c,S.h[c].sel])),fs0=()=>Object.fromEntries(L.map(l=>[l,S.fl[l].sel]));
+const blk=x=>x.amt===""||x.amt==null;
+const fo=o=>{const n=Math.min(o.on,S.s.pax),T=n*o.pts,sr=o.src||[{pg:o.pg,amt:""}],fx=sr.reduce((a,x)=>a+(blk(x)?0:+x.amt),0),bl=sr.findIndex(blk),rest=Math.max(T-fx,0),src=sr.map((x,k)=>({pg:x.pg,amt:blk(x)?(k==bl?rest:0):+x.amt}));return{cash:(S.s.pax-n)*o.cash+n*o.fee,pts:T,rate:o.pts>0?Math.max(o.cash-o.fee,0)/o.pts:0,src,gap:T-src.reduce((a,x)=>a+x.amt,0)}};
+const ho=(o,nt)=>{const u=o.use&&o.pts>0,room=o.rate*nt;return{tax:o.tax,room,cash:u?o.tax:room+o.tax,pts:u?o.pts*nt:0,earned:(u?0:room)*(+o.earn||0)+(+o.bonus||0)}};
+function plan(fs,sel){const cat={Flight:0,Hotel:0,Food:0,Transportation:0,Sightseeing:0},city={Rome:0,Florence:0,"Amalfi Coast":0},pu=S.pg.map(()=>0),pe=S.pg.map(()=>0),tu={};
+C.forEach(c=>{const o=S.h[c].o[sel[c]];pe[o.epg||0]+=ho(o,S.h[c].nt).earned});
+const av=S.pg.map((g,i)=>g.own+(S.s.cnt==0?0:pe[i]));
+const dr=(k,c,amt,cv,rate)=>{if(!(amt>0))return 0;if(!cv){pu[c]+=amt;av[c]-=amt;return 0}const t=Math.min(amt,Math.max(av[c],0)),sh=amt-t;pu[c]+=t;av[c]-=t;if(sh>0){tu[k]=tu[k]||{pts:0,cash:0};tu[k].pts+=sh;tu[k].cash+=sh*rate}return sh*rate};
+L.forEach(l=>{const o=S.fl[l].o[fs[l]],r=fo(o);let x=0;r.src.forEach(y=>x+=dr("f."+l,y.pg,y.amt,o.cover,r.rate));cat.Flight+=r.cash+x;city.Rome+=r.cash+x});
+C.forEach((c,i)=>{const h=S.h[c],o=h.o[sel[c]],r=ho(o,h.nt),x=dr("h."+c,o.pg,r.pts,o.cover,o.pts>0?o.rate/o.pts:0),t=r.cash+x;cat.Hotel+=t;city[c]+=t;["Food","Transportation","Sightseeing"].forEach(k=>{const v=+S.x[k][i]||0;cat[k]+=v;city[c]+=v})});
+return{cat,city,pu,pe,tu,cash:Object.values(cat).reduce((a,b)=>a+b,0)}}
+const bal=(p,i)=>S.pg[i].own+(S.s.cnt==0?0:p.pe[i])-p.pu[i];
+function setp(p,v){const a=p.split(".");let o=S;for(let i=0;i<a.length-1;i++)o=o[a[i]];o[a[a.length-1]]=v}
+const inp=(p,v,t)=>`<input data-p="${p}" data-t="${t}" ${t!="t"?'type="number" inputmode="decimal" step="any"':'type="text"'} value="${esc(v)}">`;
+const fld=(l,p,v,t="n")=>`<label>${l}${inp(p,v,t)}</label>`;
+const sel=(l,p,v,opts,t="t")=>`<label>${l}<select data-p="${p}" data-t="${t}">${opts.map(([a,b])=>`<option value="${a}" ${a==v?"selected":""}>${esc(b)}</option>`).join("")}</select></label>`;
+const pgOpts=k=>S.pg.map((g,i)=>[i,g.n]).filter(([i])=>ok(i,k));
+function build(){
+S.pg.forEach(g=>{});L.forEach(l=>S.fl[l].o.forEach(o=>{if(!o.src||!o.src.length)o.src=[{pg:o.pg,amt:""}];o.src.forEach(x=>{if(!ok(x.pg,"Flights"))x.pg=first("Flights")})}));C.forEach(c=>S.h[c].o.forEach(o=>{if(!ok(o.pg,"Hotels"))o.pg=first("Hotels")}));
+$("#set").innerHTML=[["Total cash budget ($)","s.budget",S.s.budget],["Reserve held back (%)","s.res",S.s.res],["Travelers","s.pax",S.s.pax],["Min ¢ per point to redeem","s.cpp",S.s.cpp]].map(a=>fld(a[0],a[1],a[2])).join("")+C.map((c,i)=>fld("Stop "+(i+1)+" name (first stop = arrival/departure)",`cn.${c}`,dn(c),"t")).join("")+sel("Count hotel-earned points toward balances","s.cnt",S.s.cnt==0?0:1,[[1,"Yes"],[0,"No (they post after the stay)"]],"n");
+$("#pgs").innerHTML=S.pg.map((g,i)=>`<div class="o"><div class="oh"><span></span>${S.pg.length>1?`<button class="x" data-a="del-pg" data-i="${i}" title="Remove card">×</button>`:""}</div>${fld("Card / program",`pg.${i}.n`,g.n,"t")}<div class="g">${fld("Points balance",`pg.${i}.own`,g.own)}${sel("Use for",`pg.${i}.use`,g.use,[["Flights","Flights only"],["Hotels","Hotels only"],["Both","Flights & hotels"]])}</div><div class="chip" data-o="p.${i}"></div></div>`).join("")+(S.pg.length<8?`<button class="add" data-a="add-pg">+ Add card / program</button>`:"");
+$("#fl").innerHTML=L.map(l=>{const F=S.fl[l];return `<h3>${LT(l)}</h3><div class="g3">`+F.o.map((o,i)=>`<div class="o ${F.sel==i?"sel":""}"><div class="oh"><label><input type="radio" name="fs${l}" ${F.sel==i?"checked":""} data-a="sel-f" data-l="${l}" data-i="${i}"> Use this plan</label>${F.o.length>1?`<button class="x" data-a="del-f" data-l="${l}" data-i="${i}">×</button>`:""}</div>${fld("Scenario name",`fl.${l}.o.${i}.n`,o.n,"t")}<div class="g">${sel("Cabin",`fl.${l}.o.${i}.cab`,o.cab,[["Coach","Coach"],["Premium","Premium economy"],["Business","Business"],["First","First"]])}${fld("Cash fare / person ($)",`fl.${l}.o.${i}.cash`,o.cash)}${fld("Points / person",`fl.${l}.o.${i}.pts`,o.pts)}${fld("Cash fees on points / person ($)",`fl.${l}.o.${i}.fee`,o.fee)}${fld("Travelers paying with points",`fl.${l}.o.${i}.on`,o.on)}</div><label style="color:var(--tx);font-weight:600">Points funded from (transfer to the same airline partner)</label>${o.src.map((x,k)=>`<div style="display:flex;gap:6px;align-items:flex-end"><div style="flex:1">${sel("Card",`fl.${l}.o.${i}.src.${k}.pg`,x.pg,pgOpts("Flights"),"n")}</div><div style="flex:1">${fld("Points from card (blank = the rest)",`fl.${l}.o.${i}.src.${k}.amt`,x.amt,"nb")}</div>${o.src.length>1?`<button class="x" data-a="del-src" data-l="${l}" data-i="${i}" data-k="${k}">×</button>`:""}</div>`).join("")}${o.src.length<pgOpts("Flights").length?`<button class="add" data-a="add-src" data-l="${l}" data-i="${i}">+ Add another card</button>`:""}<label style="color:var(--tx)"><input type="checkbox" data-p="fl.${l}.o.${i}.cover" data-t="b" ${o.cover?"checked":""}> If points run short, pay the difference in cash</label><div class="chip" data-o="f.${l}.${i}"></div></div>`).join("")+(F.o.length<6?`<button class="add" data-a="add-f" data-l="${l}">+ Add ${l.toLowerCase()} scenario</button>`:"")+"</div>"}).join("");
+$("#tabs").innerHTML=C.map(c=>`<button class="tab ${c==tab?"on":""}" data-a="tab" data-i="${c}">${esc(dn(c))}</button>`).join("");
+const h=S.h[tab];$("#ho").innerHTML=`<div class="o" style="border-style:dashed">${fld("Nights in "+dn(tab),`h.${tab}.nt`,h.nt)}</div>`+h.o.map((o,i)=>`<div class="o ${h.sel==i?"sel":""}"><div class="oh"><label><input type="radio" name="hs" ${h.sel==i?"checked":""} data-a="sel-h" data-i="${i}"> Use this hotel</label>${h.o.length>1?`<button class="x" data-a="del-h" data-i="${i}">×</button>`:""}</div>${fld("Hotel",`h.${tab}.o.${i}.n`,o.n,"t")}<div class="g">${fld("Rate / night, room ($)",`h.${tab}.o.${i}.rate`,o.rate)}${fld("City tax, whole stay ($)",`h.${tab}.o.${i}.tax`,o.tax)}${fld("Points / night (optional)",`h.${tab}.o.${i}.pts`,o.pts)}${sel("Points card",`h.${tab}.o.${i}.pg`,o.pg,pgOpts("Hotels"),"n")}${fld("Earn: points per $ of room",`h.${tab}.o.${i}.earn`,o.earn||0)}${fld("Flat bonus points",`h.${tab}.o.${i}.bonus`,o.bonus||0)}${sel("Earn into card",`h.${tab}.o.${i}.epg`,o.epg||0,S.pg.map((g,j)=>[j,g.n]),"n")}</div><label style="color:var(--tx)"><input type="checkbox" data-p="h.${tab}.o.${i}.use" data-t="b" ${o.use?"checked":""}> Pay with points (needs points/night)</label><label style="color:var(--tx)"><input type="checkbox" data-p="h.${tab}.o.${i}.cover" data-t="b" ${o.cover?"checked":""}> If points run short, pay the difference in cash</label><div class="chip" data-o="h.${i}"></div></div>`).join("")+(h.o.length<5?`<button class="add" data-a="add-h">+ Add hotel</button>`:"");
+$("#ot").innerHTML=`<table><tr><th></th>${C.map(c=>`<th>${esc(dn(c))}</th>`).join("")}</tr>`+["Food","Transportation","Sightseeing"].map(k=>`<tr><td>${k}</td>${C.map((c,i)=>`<td>${inp(`x.${k}.${i}`,S.x[k][i],"n")}</td>`).join("")}</tr>`).join("")+`</table>`;refresh()}
+const stat=(c,b,r)=>c>b?["OVER BUDGET","bad"]:c>b*(1-r/100)?["Using reserve","wn"]:["On track","ok"];
+function chip(cash,pts,pgl,p,cur,extra){const s=S.s,[t,cl]=stat(p.cash,s.budget,s.res),d=p.cash-cur.cash,act=pgl.filter(x=>x.amt>0);
+return `<b>${f$(cash)} cash</b>${pts?` + ${act.map(x=>fp(x.amt)+" "+esc(S.pg[x.pg].n)).join(" + ")} pts`:""}${extra||""}<div class="im ${cl}">Trip ${f$(p.cash)} (${d>=0?"+":""}${f$(d)}) · ${f$(s.budget-p.cash)} left · ${t}</div>${act.map(x=>{const lf=bal(p,x.pg),n=esc(S.pg[x.pg].n);return `<div class="im ${lf<0?"bad":"ok"}">${lf<0?"⚠ Over "+n+" balance by "+fp(-lf):n+": "+fp(lf)+" pts left"}</div>`}).join("")}`}
+const tum=u=>u?` · incl. ${f$(u.cash)} cash for ${fp(u.pts)} pts over balance`:"";
+const vc=(c)=>` · ${c.toFixed(2)}¢/pt ${c>=S.s.cpp?"✓ good value":"✗ low value"}`;
+function refresh(){const s=S.s,sl=hs(),fs=fs0(),cur=plan(fs,sl),[t,cl]=stat(cur.cash,s.budget,s.res),V=`var(--${cl=="ok"?"ok":cl=="wn"?"wn":"bad"})`;
+const ov=S.pg.map((g,i)=>[g.n,-bal(cur,i)]).filter(a=>a[1]>0);
+$("#hC").textContent=f$(cur.cash);$("#hL").textContent=f$(s.budget-cur.cash);$("#hL").style.color=s.budget-cur.cash<0?"var(--bad)":"";
+$("#hP").textContent=ov.length?"Over: "+ov.map(a=>a[0]).join(", "):"Within balances";$("#hP").style.color=ov.length?"var(--bad)":"var(--ok)";$("#hS").textContent=t;$("#hS").style.color=V;
+document.querySelectorAll("[data-o]").forEach(el=>{const a=el.dataset.o.split(".");
+if(a[0]=="p"){const i=+a[1],g=S.pg[i],u=cur.pu[i],lf=bal(cur,i);el.innerHTML=`Used <b>${fp(u)}</b>${cur.pe[i]>0?` · earned <b>+${fp(cur.pe[i])}</b>`:""} · <span class="im ${lf<0?"bad":"ok"}">${lf<0?"Over by "+fp(-lf):fp(lf)+" left"}</span> · est. value ${f$(Math.max(lf,0)*s.cpp/100)}`}
+else if(a[0]=="f"){const l=a[1],i=+a[2],o=S.fl[l].o[i],r=fo(o),p=plan({...fs,[l]:i},sl);let x=` · ${o.cab}`;if(Math.min(o.on,s.pax)>0&&o.pts>0)x+=vc((o.cash-o.fee)/o.pts*100);x+=r.gap>0.5?`<br><b style="color:var(--bad)">⚠ ${fp(r.gap)} pts not funded — add a card or amount</b>`:r.gap<-0.5?`<br><small>${fp(-r.gap)} extra pts assigned</small>`:"";const u=p.tu["f."+l];el.innerHTML=chip(r.cash+(u?u.cash:0),r.pts,r.src,p,cur,x+tum(u))}
+else{const h=S.h[tab],o=h.o[a[1]],r=ho(o,h.nt),p=plan(fs,{...sl,[tab]:+a[1]});let x=r.pts>0?vc(r.room/r.pts*100):"";if(r.earned>0)x+=` · earns +${fp(r.earned)} ${esc(S.pg[o.epg||0].n)} pts`;const u=p.tu["h."+tab];el.innerHTML=chip(r.cash+(u?u.cash:0),r.pts,[{pg:o.pg,amt:r.pts}],p,cur,tum(u)+x+`<br><small>${h.nt} nights incl. ${f$(r.tax)} city tax</small>`)}});
+const h=S.h[tab],c0=ho(h.o[h.sel],h.nt),room=s.budget*(1-s.res/100)-(cur.cash-c0.cash),mx=(room-c0.tax)/h.nt;
+$("#cap").innerHTML=mx>0?`With everything else as planned, you can afford roughly <b>${f$(mx)}/night</b> for a room in ${esc(dn(tab))} and stay within budget (keeping your ${s.res}% reserve).`:`Everything else already uses your budget — ${esc(dn(tab))} hotels would push you <b style="color:var(--bad)">over</b>. Trim flights or other costs, or pay with points.`;
+const bar=(n,v,tot,c,f=f$)=>`<div class="row"><span>${n}</span><div class="bar"><i style="width:${tot>0?Math.min(100,v/tot*100):0}%;background:${c}"></i></div><span>${f(v)} · ${tot>0?Math.round(v/tot*100):0}%</span></div>`;
+let a=0;const seg=K.map((k,i)=>{const w=cur.cash>0?cur.cat[k]/cur.cash*100:0,r=`${COL[i]} ${a}% ${a+w}%`;a+=w;return r}).join(",");
+$("#ov").innerHTML=`<div><b>By category</b><div class="don" style="background:conic-gradient(${cur.cash>0?seg:"var(--bd) 0 100%"})"><div></div></div><div class="lg">${K.map((k,i)=>`<span><i style="background:${COL[i]}"></i>${k}</span>`).join("")}</div>${K.map((k,i)=>bar(k,cur.cat[k],cur.cash,COL[i])).join("")}</div>
+<div><b>Budget used</b><div class="bar" style="height:16px;margin:8px 0"><i style="width:${Math.min(100,cur.cash/s.budget*100)}%;background:${V}"></i></div><div class="sub">${Math.round(cur.cash/s.budget*100)}% of ${f$(s.budget)} · reserve ${f$(s.budget*s.res/100)}</div>
+<b>By city</b>${C.map((c,i)=>bar(esc(dn(c)),cur.city[c],cur.cash,COL[i])).join("")}<div style="margin-top:10px"><b>Points used vs balance (per card)</b>${S.pg.map((g,i)=>{const T=g.own+(S.s.cnt==0?0:cur.pe[i]);return bar(esc(g.n),cur.pu[i],T,cur.pu[i]>T?"var(--bad)":"var(--ac)",fp)}).join("")}</div></div>`;
+$("#scl").innerHTML=S.sc.map((c,i)=>{const p=plan(c.fs,c.hs),[tt,k]=stat(p.cash,s.budget,s.res),o=p.pu.some((u,j)=>bal(p,j)<0);return `<div class="sc"><div><b>${esc(c.n)}</b><br><small style="color:var(--mu)">${L.map(l=>esc((S.fl[l].o[c.fs[l]]||{n:"?"}).n)).join(" → ")} · ${C.map(x=>esc((S.h[x].o[c.hs[x]]||{n:"?"}).n.slice(0,20))).join(" / ")}</small></div><div style="text-align:right">${f$(p.cash)} cash<br><span class="im ${k}">${f$(s.budget-p.cash)} left</span>${o?' <span class="im bad">points over</span>':""}</div><div><button class="add" data-a="load-sc" data-i="${i}">Load</button> <button class="x" data-a="del-sc" data-i="${i}">×</button></div></div>`}).join("")}
+document.addEventListener("input",e=>{const t=e.target,p=t.dataset.p;if(!p)return;setp(p,t.type=="checkbox"?t.checked:t.dataset.t=="t"?t.value:t.dataset.t=="nb"?(t.value===""?"":parseFloat(t.value)||0):(parseFloat(t.value)||0));save();/^pg\.\d\.use$/.test(p)?build():refresh()});
+document.addEventListener("change",e=>{const p=e.target.dataset.p;if(p&&(/^pg\.\d\.n$/.test(p)||p.startsWith("cn.")))build()});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,i=b.dataset.i,l=b.dataset.l,h=S.h[tab];
+if(a=="sel-f")S.fl[l].sel=+i;else if(a=="sel-h")h.sel=+i;else if(a=="tab")tab=i;
+else if(a=="add-f")S.fl[l].o.push(fo0("New scenario","Coach",625,30000,60,1,first("Flights")));
+else if(a=="del-f"){const F=S.fl[l];F.o.splice(i,1);F.sel=Math.min(F.sel,F.o.length-1);S.sc.forEach(c=>{if(c.fs[l]>=F.o.length)c.fs[l]=0})}
+else if(a=="add-h")h.o.push({n:"New hotel",rate:250,tax:40,pts:0,use:false,pg:first("Hotels")});
+else if(a=="del-h"){h.o.splice(i,1);h.sel=Math.min(h.sel,h.o.length-1);S.sc.forEach(c=>{if(c.hs[tab]>=h.o.length)c.hs[tab]=0})}
+else if(a=="save-sc"){S.sc.push({n:$("#scn").value||"Scenario "+(S.sc.length+1),fs:fs0(),hs:hs()});$("#scn").value=""}
+else if(a=="del-sc")S.sc.splice(i,1);
+else if(a=="load-sc"){const c=S.sc[i];L.forEach(x=>S.fl[x].sel=c.fs[x]);C.forEach(x=>S.h[x].sel=c.hs[x])}
+else if(a=="add-pg")S.pg.push({n:"New card",own:0,use:"Both"});
+else if(a=="del-pg"){S.pg.splice(i,1);const m=v=>(v||0)==i?0:v>i?v-1:v;L.forEach(x=>S.fl[x].o.forEach(o=>{o.pg=m(o.pg);(o.src||[]).forEach(y=>y.pg=m(y.pg))}));C.forEach(c=>S.h[c].o.forEach(o=>{o.pg=m(o.pg);o.epg=m(o.epg)}))}
+else if(a=="add-src")S.fl[l].o[i].src.push({pg:first("Flights"),amt:""});
+else if(a=="del-src")S.fl[l].o[i].src.splice(b.dataset.k,1);
+else if(a=="export"){exportPlan();return}
+else if(a=="import"){const e=$("#bk");if(e.style.display=="block"&&e.value.trim()){if(!loadPlan(e.value))return}else{$("#bf").click();return}}
+else if(a=="reset"){if(!window._rc){window._rc=1;b.textContent="Click again to confirm reset";setTimeout(()=>{window._rc=0;b.textContent="Reset all"},4000);return}window._rc=0;S=def()}
+save();a=="save-sc"||a=="del-sc"?refresh():build()});
+function loadPlan(t){try{const o=JSON.parse(t);const m=mig(o);if(!m)throw 0;S=m;$("#bks").textContent="Imported ✓";return true}catch(x){$("#bks").textContent="That isn't a valid plan file.";return false}}
+async function exportPlan(){const t=JSON.stringify(S,null,1),m=$("#bks");
+try{const d=window.claude&&await window.claude.use("downloads");if(d){await d.save({filename:"wander-ledger-plan.json",data:t});m.textContent="Plan file ready.";return}}catch(e){if(e&&e.code=="declined"){m.textContent="Cancelled.";return}}
+try{const u=URL.createObjectURL(new Blob([t],{type:"application/json"})),a=document.createElement("a");a.href=u;a.download="wander-ledger-plan.json";document.body.appendChild(a);a.click();a.remove();m.textContent="Plan file downloaded.";return}catch(e){}
+const e=$("#bk");e.style.display="block";e.value=t;e.select();m.textContent="Downloads aren't available here — copy this text instead (then paste and tap Import)."}
+document.addEventListener("change",e=>{if(e.target.id!="bf")return;const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{if(loadPlan(r.result)){save();build()}};r.readAsText(f);e.target.value=""});
+build();
+</script></body></html>
